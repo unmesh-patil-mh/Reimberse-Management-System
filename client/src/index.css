@@ -169,6 +169,8 @@
   --font-display: 'Fraunces', serif;
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  color: #000;
+  background-color: #F5F5F0;
 }
 
 .landing-page .font-display { font-family: var(--font-display); }
