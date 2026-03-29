@@ -1,17 +1,112 @@
-// This is your Prisma schema file
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ──────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum ExpenseStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum StepStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RuleType {
+  PERCENTAGE
+  SPECIFIC
+  HYBRID
+}
+
+// ─── MODELS ─────────────────────────────────────────────
+
+model Company {
+  id           String         @id @default(cuid())
+  name         String
+  baseCurrency String         @default("INR")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  users        User[]
+  approvalRules ApprovalRule[]
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   name      String
   email     String   @unique
+  password  String
+  role      Role     @default(EMPLOYEE)
+  companyId String
+  managerId String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  company  Company @relation(fields: [companyId], references: [id])
+  manager  User?   @relation("ManagerRelation", fields: [managerId], references: [id])
+  reports  User[]  @relation("ManagerRelation")
+
+  expenses      Expense[]
+  approvalSteps ApprovalStep[]
+  approvalRulesAsSpecific ApprovalRule[] @relation("SpecificApprover")
+}
+
+model Expense {
+  id               String        @id @default(cuid())
+  amount           Float
+  currency         String        @default("INR")
+  category         String
+  description      String?
+  date             DateTime
+  status           ExpenseStatus @default(PENDING)
+  currentStepOrder Int           @default(1)
+  createdById      String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  createdBy     User           @relation(fields: [createdById], references: [id])
+  approvalSteps ApprovalStep[]
+}
+
+model ApprovalStep {
+  id            String     @id @default(cuid())
+  expenseId     String
+  approverId    String
+  status        StepStatus @default(PENDING)
+  sequenceOrder Int
+  comments      String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  expense  Expense @relation(fields: [expenseId], references: [id])
+  approver User    @relation(fields: [approverId], references: [id])
+
+  @@unique([expenseId, sequenceOrder])
+}
+
+model ApprovalRule {
+  id                  String   @id @default(cuid())
+  companyId           String
+  type                RuleType
+  percentageValue     Float?
+  specificApproverId  String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  company          Company @relation(fields: [companyId], references: [id])
+  specificApprover User?   @relation("SpecificApprover", fields: [specificApproverId], references: [id])
 }
