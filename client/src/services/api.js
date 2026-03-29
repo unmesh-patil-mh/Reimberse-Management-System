@@ -40,6 +40,7 @@ export const usersAPI = {
 
 // ── Expenses ────────────────────────────────────
 export const expensesAPI = {
+  getAll: () => api.get('/expenses/all'),
   getMy: () => api.get('/expenses/my'),
   getById: (id) => api.get(`/expenses/${id}`),
   create: (data) => api.post('/expenses', data),

@@ -1,6 +1,11 @@
 const expenseService = require('../services/expense.service');
 const { sendSuccess } = require('../utils/response');
 
+const getAllExpenses = async (req, res) => {
+  const expenses = await expenseService.getAllExpenses(req.user.companyId);
+  sendSuccess(res, 'All expenses retrieved successfully.', expenses);
+};
+
 const createExpense = async (req, res) => {
   const expense = await expenseService.createExpense(req.body, req.user);
   sendSuccess(res, 'Expense created with dynamic approval chain.', expense, 201);
@@ -16,4 +21,4 @@ const getExpenseById = async (req, res) => {
   sendSuccess(res, 'Expense retrieved successfully.', expense);
 };
 
-module.exports = { createExpense, getMyExpenses, getExpenseById };
+module.exports = { createExpense, getMyExpenses, getExpenseById, getAllExpenses };

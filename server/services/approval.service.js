@@ -67,35 +67,61 @@ const evaluateRules = async (expense, companyId) => {
   return false;
 };
 
-const getPendingApprovals = async (userId) => {
-  // Find all expenses where this user has a pending step AND it's their turn
+const getPendingApprovals = async (user) => {
+  // Find all PENDING approval steps assigned to this user
   const steps = await prisma.approvalStep.findMany({
     where: {
-      approverId: userId,
+      approverId: user.id,
       status: 'PENDING',
     },
     include: {
       expense: {
         include: {
-          createdBy: { select: { id: true, name: true, email: true } },
+          createdBy: { select: { id: true, name: true, email: true, companyId: true } },
         },
       },
     },
     orderBy: { createdAt: 'asc' },
   });
 
-  // Filter to only show steps where it's actually this approver's turn
-  // (currentStepOrder matches their sequenceOrder and expense is still PENDING)
-  const activeSteps = steps.filter(
+  // Filter: must be PENDING expense, correct step order, same company
+  let activeSteps = steps.filter(
     (step) =>
       step.expense.status === 'PENDING' &&
-      step.sequenceOrder === step.expense.currentStepOrder
+      step.sequenceOrder === step.expense.currentStepOrder &&
+      step.expense.createdBy.companyId === user.companyId
   );
+
+  // If ADMIN, also fetch steps in their company they could act on
+  // (e.g., when the admin IS the approver for expenses they created)
+  if (user.role === 'ADMIN' && activeSteps.length === 0) {
+    const allCompanyPendingSteps = await prisma.approvalStep.findMany({
+      where: {
+        status: 'PENDING',
+        expense: {
+          status: 'PENDING',
+          createdBy: { companyId: user.companyId },
+        },
+      },
+      include: {
+        expense: {
+          include: {
+            createdBy: { select: { id: true, name: true, email: true, companyId: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    activeSteps = allCompanyPendingSteps.filter(
+      (step) => step.sequenceOrder === step.expense.currentStepOrder
+    );
+  }
 
   return activeSteps;
 };
 
-const approveExpense = async (expenseId, userId, comments) => {
+const approveExpense = async (expenseId, user, comments) => {
   const expense = await prisma.expense.findUnique({
     where: { id: expenseId },
     include: { createdBy: { select: { companyId: true } } },
@@ -109,18 +135,34 @@ const approveExpense = async (expenseId, userId, comments) => {
     throw new AppError(`Expense is already ${expense.status}.`, 400);
   }
 
-  // Find the current active step for this approver
-  const currentStep = await prisma.approvalStep.findFirst({
+  // Company isolation
+  if (expense.createdBy.companyId !== user.companyId) {
+    throw new AppError('Access denied.', 403);
+  }
+
+  // Find the current active step — check if user is the assigned approver
+  let currentStep = await prisma.approvalStep.findFirst({
     where: {
       expenseId,
-      approverId: userId,
+      approverId: user.id,
       sequenceOrder: expense.currentStepOrder,
       status: 'PENDING',
     },
   });
 
+  // If not the assigned approver but is ADMIN, allow them to act on the current step
+  if (!currentStep && user.role === 'ADMIN') {
+    currentStep = await prisma.approvalStep.findFirst({
+      where: {
+        expenseId,
+        sequenceOrder: expense.currentStepOrder,
+        status: 'PENDING',
+      },
+    });
+  }
+
   if (!currentStep) {
-    throw new AppError('You are not the current approver for this expense.', 403);
+    throw new AppError('You are not authorized to approve this expense.', 403);
   }
 
   // Approve the current step
@@ -164,7 +206,7 @@ const approveExpense = async (expenseId, userId, comments) => {
   return updatedExpense;
 };
 
-const rejectExpense = async (expenseId, userId, comments) => {
+const rejectExpense = async (expenseId, user, comments) => {
   const expense = await prisma.expense.findUnique({
     where: { id: expenseId },
     include: { createdBy: { select: { companyId: true } } },
@@ -178,18 +220,34 @@ const rejectExpense = async (expenseId, userId, comments) => {
     throw new AppError(`Expense is already ${expense.status}.`, 400);
   }
 
-  // Validate this is the current approver
-  const currentStep = await prisma.approvalStep.findFirst({
+  // Company isolation
+  if (expense.createdBy.companyId !== user.companyId) {
+    throw new AppError('Access denied.', 403);
+  }
+
+  // Find the current active step
+  let currentStep = await prisma.approvalStep.findFirst({
     where: {
       expenseId,
-      approverId: userId,
+      approverId: user.id,
       sequenceOrder: expense.currentStepOrder,
       status: 'PENDING',
     },
   });
 
+  // Admin override
+  if (!currentStep && user.role === 'ADMIN') {
+    currentStep = await prisma.approvalStep.findFirst({
+      where: {
+        expenseId,
+        sequenceOrder: expense.currentStepOrder,
+        status: 'PENDING',
+      },
+    });
+  }
+
   if (!currentStep) {
-    throw new AppError('You are not the current approver for this expense.', 403);
+    throw new AppError('You are not authorized to reject this expense.', 403);
   }
 
   // Reject step and expense — flow stops immediately

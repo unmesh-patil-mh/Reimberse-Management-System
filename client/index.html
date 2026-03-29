@@ -7,7 +7,14 @@
     <title>ReimburseFlow — Expense Approval System</title>
     <meta name="description" content="Dynamic expense reimbursement platform with multi-step approval workflows and role-based access control." />
   </head>
-  <body class="dark">
+  <body>
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme');
+        if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.classList.add(t);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -152,4 +152,19 @@ const getExpenseById = async (id, user) => {
   return expense;
 };
 
-module.exports = { createExpense, getMyExpenses, getExpenseById };
+const getAllExpenses = async (companyId) => {
+  const expenses = await prisma.expense.findMany({
+    where: { createdBy: { companyId } },
+    include: {
+      createdBy: { select: { id: true, name: true, email: true } },
+      approvalSteps: {
+        include: { approver: { select: { id: true, name: true, email: true } } },
+        orderBy: { sequenceOrder: 'asc' },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+  return expenses;
+};
+
+module.exports = { createExpense, getMyExpenses, getExpenseById, getAllExpenses };
