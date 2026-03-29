@@ -1,391 +1,121 @@
-# 💸 Reimbursement Management System
+<div align="center">
 
-A full-stack expense reimbursement platform with multi-step sequential approval workflows, role-based access control, and company-scoped multi-tenancy.
----
+# ReimburseFlow
 
-## 📋 Table of Contents
+**Expense reimbursements, simplified.**
 
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Architecture](#architecture)
-- [Database Schema](#database-schema)
-- [API Reference](#api-reference)
-- [Approval Workflow](#approval-workflow)
-- [Role-Based Access Control](#role-based-access-control)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
+A modern expense management platform with dynamic approval workflows,
+multi-currency support, and real-time analytics — built for teams that move fast.
+
+[Get Started](#getting-started) · [Features](#features) · [Tech Stack](#tech-stack)
+
+</div>
 
 ---
 
-## Overview
+## The Landing Page
 
-This system allows employees to submit expense reimbursement requests which then flow through a configurable multi-step approval chain. Admins can define custom approval rules per company, and the system dynamically builds the approver chain based on the organizational hierarchy stored in the database.
+A neobrutalism-inspired landing page with bold typography, interactive FAQ sections with sound effects, and a clear call to action.
 
-### Key Features
+![Landing Page](Landing%20page.png)
 
-- **Multi-tenant**: Each signup creates an isolated company; users, expenses, and rules are all company-scoped.
-- **Dynamic approval chains**: Approval steps are built at expense creation time by walking the `managerId` hierarchy — no hardcoded chains.
-- **Configurable approval rules**: Companies can define `PERCENTAGE`, `SPECIFIC`, or `HYBRID` rules that determine when an expense is considered fully approved.
-- **Sequential step processing**: Only the current step's approver can act; approvers cannot skip the queue.
-- **JWT Authentication**: All protected routes require a valid Bearer token.
-- **Role-Based Authorization**: Three roles — `ADMIN`, `MANAGER`, `EMPLOYEE` — with distinct permissions.
+---
+
+## Dashboard
+
+Everything at a glance — total expenses, approval rates, category breakdowns, and spending trends.
+All amounts are converted to INR using live exchange rates.
+
+![Dashboard](dashboard.jpeg)
+
+---
+
+## Approvals
+
+Managers and admins see a clean queue of pending expenses waiting for their decision.
+One click to approve, one click to reject — with optional comments at each step.
+
+![Approvals](approvals.jpeg)
+
+---
+
+## Team Management
+
+View your entire organization. Add members, assign roles, and set up reporting chains
+that power the dynamic approval workflows.
+
+![Team](team.jpeg)
+
+---
+
+## Approval Rules
+
+Configure how expenses get resolved. Choose between percentage-based thresholds,
+specific approver requirements, or a hybrid of both.
+
+![Approval Rules](approval%20rules.jpeg)
+
+---
+
+## Features
+
+🔄 **Dynamic Approval Chains**
+Approval steps are built automatically by walking the manager hierarchy — no hardcoded chains, no manual routing.
+
+💱 **Multi-Currency Support**
+Submit expenses in any currency. Live exchange rates from [exchangerate-api.com](https://exchangerate-api.com) convert everything to your base currency for unified reporting.
+
+🌍 **160+ Currencies**
+Currency data pulled from the [REST Countries API](https://restcountries.com) with popular currencies (INR, USD, EUR, GBP) pinned to the top.
+
+📊 **Real-Time Analytics**
+Interactive charts powered by Recharts — spend by category, status distribution donuts, and monthly trend lines.
+
+🏢 **Multi-Tenant**
+Each signup creates an isolated company. Users, expenses, and rules are all company-scoped.
+
+🔐 **Role-Based Access**
+Three roles — Admin, Manager, Employee — each with distinct permissions and views.
+
+🌙 **Dark & Light Mode**
+Full theme support with smooth transitions, persisted to localStorage.
+
+🔊 **Sound Design**
+A custom "faaah" audio plays on your first interaction with the landing page.
+
+---
+
+## How It Works
+
+```
+Employee submits expense
+        ↓
+System walks the managerId chain → builds approval steps
+        ↓
+Step 1 approver reviews
+        ↓
+   ┌────┴────┐
+   Approve    Reject → expense rejected immediately
+   ↓
+   Evaluate rules
+   ↓
+   ├── Rules pass → expense approved ✅
+   └── Rules not met → next approver's turn
+```
 
 ---
 
 ## Tech Stack
 
-### Backend (`/server`)
-
-| Technology | Purpose |
-|---|---|
-| **Node.js + Express 5** | REST API server |
-| **Prisma ORM** | Type-safe database client & migrations |
-| **PostgreSQL** | Relational database |
-| **JWT (`jsonwebtoken`)** | Stateless authentication tokens |
-| **bcryptjs** | Password hashing (salt rounds: 12) |
-| **dotenv** | Environment variable management |
-| **nodemon** | Development hot-reload |
-
-### Frontend (`/client`)
-
-| Technology | Purpose |
-|---|---|
-| **React 19** | UI framework |
-| **Vite 8** | Build tool & dev server |
-| **React Router DOM 7** | Client-side routing |
-| **Axios** | HTTP client |
-| **Tailwind CSS 4** | Utility-first styling |
-
-> **Note:** The frontend is currently scaffolded (default Vite + React template). Business UI is yet to be built.
-
----
-
-## Project Structure
-
-```
-reimbursement-management/
-├── client/                         # React frontend (Vite)
-│   ├── src/
-│   │   ├── App.jsx                 # Root component (scaffold)
-│   │   ├── App.css
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── public/
-│   ├── index.html
-│   ├── vite.config.js
-│   └── package.json
-│
-└── server/                         # Node.js / Express backend
-    ├── server.js                   # Entry point — mounts all routes
-    ├── config/
-    │   └── db.js                   # Prisma client singleton
-    ├── prisma/
-    │   ├── schema.prisma           # Database models & enums
-    │   └── migrations/             # Prisma migration history
-    ├── middlewares/
-    │   ├── auth.middleware.js      # JWT authentication + role authorization
-    │   └── error.middleware.js     # Global error handler
-    ├── routes/
-    │   ├── auth.routes.js          # POST /api/auth/signup, /login
-    │   ├── user.routes.js          # CRUD for users (admin-only)
-    │   ├── expense.routes.js       # Expense submission & retrieval
-    │   ├── approval.routes.js      # Approve / reject expense steps
-    │   ├── rule.routes.js          # Approval rule management
-    │   ├── company.routes.js       # Company info
-    │   └── health.routes.js        # GET /api/health
-    ├── controllers/
-    │   ├── auth.controller.js
-    │   ├── user.controller.js
-    │   ├── expense.controller.js
-    │   ├── approval.controller.js
-    │   ├── rule.controller.js
-    │   ├── company.controller.js
-    │   └── health.controller.js
-    ├── services/
-    │   ├── auth.service.js         # signup, login logic
-    │   ├── user.service.js         # createUser, getAllUsers, updateUser
-    │   ├── expense.service.js      # createExpense, getMyExpenses, getExpenseById
-    │   ├── approval.service.js     # getPendingApprovals, approveExpense, rejectExpense
-    │   ├── rule.service.js         # createRule, getRules
-    │   └── company.service.js      # getCompany
-    └── utils/
-        └── AppError.js             # Custom operational error class
-```
-
----
-
-## Architecture
-
-```
-                    ┌────────────────────────────────┐
-                    │          React Client           │
-                    │  (Vite + React Router + Axios)  │
-                    └──────────────┬─────────────────┘
-                                   │ HTTP (REST)
-                                   ▼
-                    ┌────────────────────────────────┐
-                    │        Express Server           │
-                    │                                │
-                    │  ┌──────────────────────────┐  │
-                    │  │     Auth Middleware       │  │
-                    │  │  (JWT verify + DB lookup) │  │
-                    │  └────────────┬─────────────┘  │
-                    │               │                │
-                    │  ┌────────────▼─────────────┐  │
-                    │  │     Role Middleware       │  │
-                    │  │ (ADMIN / MANAGER guard)   │  │
-                    │  └────────────┬─────────────┘  │
-                    │               │                │
-                    │  ┌────────────▼─────────────┐  │
-                    │  │       Controllers         │  │
-                    │  └────────────┬─────────────┘  │
-                    │               │                │
-                    │  ┌────────────▼─────────────┐  │
-                    │  │        Services           │  │
-                    │  │  (All business logic)     │  │
-                    │  └────────────┬─────────────┘  │
-                    │               │                │
-                    │  ┌────────────▼─────────────┐  │
-                    │  │       Prisma ORM          │  │
-                    │  └────────────┬─────────────┘  │
-                    └───────────────┼────────────────┘
-                                    │
-                    ┌───────────────▼────────────────┐
-                    │          PostgreSQL             │
-                    └────────────────────────────────┘
-```
-
----
-
-## Database Schema
-
-### Enums
-
-| Enum | Values |
-|---|---|
-| `Role` | `ADMIN`, `MANAGER`, `EMPLOYEE` |
-| `ExpenseStatus` | `PENDING`, `APPROVED`, `REJECTED` |
-| `StepStatus` | `PENDING`, `APPROVED`, `REJECTED` |
-| `RuleType` | `PERCENTAGE`, `SPECIFIC`, `HYBRID` |
-
-### Models
-
-#### `Company`
-| Field | Type | Notes |
-|---|---|---|
-| `id` | String (cuid) | Primary key |
-| `name` | String | Company name |
-| `baseCurrency` | String | Default: `INR` |
-| `users` | User[] | All users in company |
-| `approvalRules` | ApprovalRule[] | Company approval config |
-
-#### `User`
-| Field | Type | Notes |
-|---|---|---|
-| `id` | String (cuid) | Primary key |
-| `name` | String | |
-| `email` | String | Unique |
-| `password` | String | bcrypt hash |
-| `role` | Role | Default: `EMPLOYEE` |
-| `companyId` | String | FK → Company |
-| `managerId` | String? | FK → User (self-referential hierarchy) |
-
-#### `Expense`
-| Field | Type | Notes |
-|---|---|---|
-| `id` | String (cuid) | Primary key |
-| `amount` | Float | |
-| `currency` | String | Default: `INR` |
-| `category` | String | |
-| `description` | String? | |
-| `date` | DateTime | |
-| `status` | ExpenseStatus | Default: `PENDING` |
-| `currentStepOrder` | Int | Tracks active step (starts at 1) |
-| `createdById` | String | FK → User |
-
-#### `ApprovalStep`
-| Field | Type | Notes |
-|---|---|---|
-| `id` | String (cuid) | Primary key |
-| `expenseId` | String | FK → Expense |
-| `approverId` | String | FK → User |
-| `status` | StepStatus | Default: `PENDING` |
-| `sequenceOrder` | Int | Order in the chain |
-| `comments` | String? | Optional remarks |
-| Unique constraint | `(expenseId, sequenceOrder)` | |
-
-#### `ApprovalRule`
-| Field | Type | Notes |
-|---|---|---|
-| `id` | String (cuid) | Primary key |
-| `companyId` | String | FK → Company |
-| `type` | RuleType | `PERCENTAGE`, `SPECIFIC`, `HYBRID` |
-| `percentageValue` | Float? | Required for `PERCENTAGE` / `HYBRID` |
-| `specificApproverId` | String? | Required for `SPECIFIC` / `HYBRID` |
-
----
-
-## API Reference
-
-All protected routes require: `Authorization: Bearer <token>`
-
-### Auth
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/signup` | Public | Register + auto-create company; first user is `ADMIN` |
-| `POST` | `/api/auth/login` | Public | Login; returns JWT + user profile |
-
-**Signup body:**
-```json
-{
-  "name": "Alice",
-  "email": "alice@acme.com",
-  "password": "secret123",
-  "companyName": "Acme Corp",
-  "baseCurrency": "INR"
-}
-```
-
----
-
-### Users
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/users` | ADMIN | Create a new employee/manager within company |
-| `GET` | `/api/users` | ADMIN, MANAGER | List all users in the company |
-| `PATCH` | `/api/users/:id` | ADMIN | Update name, role, or managerId |
-
-**Create user body:**
-```json
-{
-  "name": "Bob",
-  "email": "bob@acme.com",
-  "password": "pass123",
-  "role": "EMPLOYEE",
-  "managerId": "<manager-user-id>"
-}
-```
-
----
-
-### Expenses
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/expenses` | Authenticated | Submit a new expense |
-| `GET` | `/api/expenses/my` | Authenticated | List own submitted expenses |
-| `GET` | `/api/expenses/:id` | Authenticated | Get single expense (company-scoped) |
-
-**Create expense body:**
-```json
-{
-  "amount": 2500.00,
-  "currency": "INR",
-  "category": "Travel",
-  "description": "Flight to Delhi",
-  "date": "2026-03-28"
-}
-```
-
-> On creation, the system dynamically builds an approval chain by walking up the `managerId` hierarchy. Steps are created in sequence order.
-
----
-
-### Approvals
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/approvals/pending` | ADMIN, MANAGER | List expenses pending this user's action |
-| `POST` | `/api/approvals/:expenseId/approve` | ADMIN, MANAGER | Approve current step |
-| `POST` | `/api/approvals/:expenseId/reject` | ADMIN, MANAGER | Reject expense immediately |
-
-**Approve/Reject body (optional):**
-```json
-{
-  "comments": "Approved for business trip."
-}
-```
-
----
-
-### Approval Rules
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `POST` | `/api/rules` | ADMIN | Create a new rule for the company |
-| `GET` | `/api/rules` | ADMIN | List all rules for the company |
-
-**Create rule body:**
-```json
-{
-  "type": "PERCENTAGE",
-  "percentageValue": 50
-}
-```
-
-| Rule Type | Behavior |
-|---|---|
-| `PERCENTAGE` | Expense approved when `approvedSteps / totalSteps >= threshold` |
-| `SPECIFIC` | Expense approved when a designated approver has approved |
-| `HYBRID` | Either `PERCENTAGE` or `SPECIFIC` condition passes |
-
----
-
-### Other
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| `GET` | `/api/health` | Public | Server health check |
-| `GET` | `/api/companies/:id` | Authenticated | Get company details |
-
----
-
-## Approval Workflow
-
-```
-Employee submits expense
-         │
-         ▼
-System walks managerId chain → builds ordered ApprovalStep list
-         │
-         ▼
-  currentStepOrder = 1  (expense created as PENDING)
-         │
-         ▼
-  Manager at step 1 sees it in /approvals/pending
-         │
-    ┌────┴──────────────┐
-    │ Approve           │ Reject
-    ▼                   ▼
-evaluateRules()      Expense = REJECTED (stops immediately)
-    │
-    ├── rules pass? → Expense = APPROVED ✅
-    │
-    └── rules not met? → currentStepOrder++ → next approver's turn
-```
-
-**Circular reference protection**: The manager chain traversal tracks visited IDs to prevent infinite loops.
-
-**Company isolation**: Users can only view expenses from their own company.
-
----
-
-## Role-Based Access Control
-
-| Action | EMPLOYEE | MANAGER | ADMIN |
-|---|:---:|:---:|:---:|
-| Submit expense | ✅ | ✅ | ✅ |
-| View own expenses | ✅ | ✅ | ✅ |
-| View pending approvals | ❌ | ✅ | ✅ |
-| Approve / Reject expense | ❌ | ✅ | ✅ |
-| Create users | ❌ | ❌ | ✅ |
-| List all users | ❌ | ✅ | ✅ |
-| Update user (role/manager) | ❌ | ❌ | ✅ |
-| Create approval rules | ❌ | ❌ | ✅ |
-| View approval rules | ❌ | ❌ | ✅ |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, Vite 8, Tailwind CSS 4, shadcn/ui |
+| Charts | Recharts with shadcn ChartContainer |
+| Animations | Framer Motion |
+| Backend | Node.js, Express 5 |
+| Database | PostgreSQL + Prisma 6 ORM |
+| Auth | JWT + bcrypt |
+| APIs | REST Countries, ExchangeRate API |
 
 ---
 
@@ -394,75 +124,93 @@ evaluateRules()      Expense = REJECTED (stops immediately)
 ### Prerequisites
 
 - Node.js 18+
-- PostgreSQL database
-- npm
+- PostgreSQL database (or use [Neon](https://neon.tech) for serverless Postgres)
 
-### 1. Clone and install dependencies
+### Setup
 
 ```bash
-# Server
+# Clone the repo
+git clone https://github.com/Proxy939/Reimbursement-management.git
+cd Reimbursement-management
+
+# Install server dependencies
 cd server
 npm install
 
-# Client
-cd ../client
-npm install
-```
+# Set up your environment
+cp .env.example .env
+# Edit .env with your DATABASE_URL and JWT_SECRET
 
-### 2. Set up environment variables
-
-Create `server/.env` (see [Environment Variables](#environment-variables) below).
-
-### 3. Run database migrations
-
-```bash
-cd server
+# Run database migrations
 npx prisma migrate dev
-```
 
-### 4. Start the servers
+# Start the backend
+npm run dev
+```
 
 ```bash
-# Terminal 1 — Backend (runs on port 5000)
-cd server
-npm run dev
-
-# Terminal 2 — Frontend (runs on port 5173)
+# In a new terminal — start the frontend
 cd client
+npm install
 npm run dev
 ```
 
----
+The app runs at `http://localhost:5173` with the API on `http://localhost:5000`.
 
-## Environment Variables
+### Environment Variables
 
-Create a `.env` file inside the `/server` directory:
+Create `server/.env`:
 
-```env
-# Database
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/reimbursement_db"
-
-# JWT
-JWT_SECRET="your-super-secret-key"
-JWT_EXPIRES_IN="7d"
-
-# Server
+```
+DATABASE_URL="postgresql://user:password@host:5432/dbname"
+JWT_SECRET="your-secret-key"
 PORT=5000
 ```
 
+Create `client/.env`:
+
+```
+VITE_API_URL=http://localhost:5000/api
+```
+
 ---
 
-## Current Implementation Status
+## Roles & Permissions
 
-| Layer | Status |
-|---|---|
-| Database schema (Prisma) | ✅ Complete |
-| Auth (signup/login + JWT) | ✅ Complete |
-| User management (CRUD) | ✅ Complete |
-| Expense submission | ✅ Complete |
-| Dynamic approval chain building | ✅ Complete |
-| Approve / Reject workflow | ✅ Complete |
-| Configurable approval rules (3 types) | ✅ Complete |
-| Company scoping / multi-tenancy | ✅ Complete |
-| Global error handling middleware | ✅ Complete |
-| React frontend UI | 🚧 Scaffolded (not yet built) |
+| | Employee | Manager | Admin |
+|---|:---:|:---:|:---:|
+| Submit expenses | ✓ | ✓ | ✓ |
+| View own expenses | ✓ | ✓ | ✓ |
+| Review & approve | — | ✓ | ✓ |
+| Manage team | — | — | ✓ |
+| Configure rules | — | — | ✓ |
+
+---
+
+## Project Structure
+
+```
+├── client/                → React frontend
+│   ├── src/
+│   │   ├── pages/         → Dashboard, Expenses, Approvals, Team, Rules
+│   │   ├── components/    → Reusable UI (shadcn + custom)
+│   │   ├── hooks/         → useCurrency, useExpenses, useAuth
+│   │   ├── context/       → AuthContext, ThemeContext
+│   │   └── services/      → API client (Axios)
+│   └── public/            → Static assets
+│
+└── server/                → Express API
+    ├── controllers/       → Route handlers
+    ├── services/          → Business logic
+    ├── middlewares/        → Auth + error handling
+    ├── prisma/            → Schema + migrations
+    └── routes/            → API route definitions
+```
+
+---
+
+<div align="center">
+
+Built with ☕ and late nights.
+
+</div>
