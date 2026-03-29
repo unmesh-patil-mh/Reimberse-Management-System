@@ -14,7 +14,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const audioPlayed = useRef(false);
 
-  // Play faaah.mp3 on first user interaction (browsers require a gesture)
+
   useEffect(() => {
     const playOnce = () => {
       if (audioPlayed.current) return;
@@ -24,7 +24,7 @@ const LandingPage = () => {
       audio.volume = 0.5;
       audio.play().catch(() => {});
 
-      // Cleanup listeners after playing
+
       window.removeEventListener('click', playOnce);
       window.removeEventListener('scroll', playOnce);
       window.removeEventListener('keydown', playOnce);
@@ -46,10 +46,10 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      {/* Sticky Navbar */}
+
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#F5F5F0]/90 backdrop-blur-md border-b-2 border-black">
         <div className="max-w-[1200px] mx-auto px-6 md:px-12 py-3 flex items-center justify-between">
-          {/* Brand */}
+
           <div className="flex items-center gap-3">
             <div
               className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center"
@@ -62,7 +62,7 @@ const LandingPage = () => {
             <span className="font-display font-black text-black text-lg leading-none">ReimburseFlow</span>
           </div>
 
-          {/* Nav Links */}
+
           <div className="hidden md:flex items-center gap-6">
             {[
               { label: 'Features', href: '#features' },
@@ -80,7 +80,7 @@ const LandingPage = () => {
             ))}
           </div>
 
-          {/* Auth buttons */}
+
           <div className="flex items-center gap-3">
             <Link
               to="/login"
@@ -99,7 +99,7 @@ const LandingPage = () => {
         </div>
       </nav>
 
-      {/* Page Sections */}
+
       <HeroSection />
       <ProblemStrip />
       <FeaturesSection />

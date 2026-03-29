@@ -13,7 +13,7 @@ import Approvals from '@/pages/Approvals';
 import Rules from '@/pages/Rules';
 import Team from '@/pages/Team';
 
-// Role-based route guard
+
 function RoleGuard({ roles, children }) {
   const { user } = useAuth();
   if (roles && !roles.includes(user?.role)) {
@@ -33,12 +33,12 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <Routes>
-            {/* Public — Landing Page */}
+
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Protected — inside AppLayout (sidebar + topbar) */}
+
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/expenses" element={<Expenses />} />
@@ -69,7 +69,7 @@ export default function App() {
               />
             </Route>
 
-            {/* Catch-all */}
+
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <ThemedToaster />

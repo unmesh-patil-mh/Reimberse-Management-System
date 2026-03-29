@@ -61,7 +61,7 @@ const HowItWorksSection = () => {
       aria-label="How It Works"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Header */}
+
         <div className="neo-reveal mb-14">
           <div
             className="inline-block border-2 border-black bg-[#F5F5F0] px-3 py-1 mb-4 font-mono text-xs font-bold tracking-widest uppercase"
@@ -77,7 +77,7 @@ const HowItWorksSection = () => {
           </h2>
         </div>
 
-        {/* Steps */}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-2 border-black">
           {steps.map((step, i) => (
             <div key={step.num} className="relative flex">
@@ -94,12 +94,12 @@ const HowItWorksSection = () => {
                   e.currentTarget.style.boxShadow = '0 0 0 transparent';
                 }}
               >
-                {/* Step number */}
+
                 <div className="font-mono text-6xl font-black text-black/8 leading-none mb-4 select-none">
                   {step.num}
                 </div>
 
-                {/* Icon */}
+
                 <div
                   className="inline-flex items-center justify-center w-14 h-14 border-2 border-black mb-5 text-white"
                   style={{ background: i === 1 ? '#0066FF' : '#000' }}
@@ -111,7 +111,7 @@ const HowItWorksSection = () => {
                 <p className="font-body text-sm text-black/55 leading-relaxed">{step.desc}</p>
               </div>
 
-              {/* Arrow connector */}
+
               {i < steps.length - 1 && (
                 <div className="hidden md:flex absolute -right-5 top-1/2 -translate-y-1/2 z-20 items-center justify-center w-10 h-10 bg-[#0066FF] border-2 border-black">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">

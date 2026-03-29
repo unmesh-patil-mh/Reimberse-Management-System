@@ -77,7 +77,7 @@ const FeaturesSection = () => {
       aria-label="Core Features"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Header */}
+
         <div className="neo-reveal mb-14">
           <div
             className="inline-block border-2 border-black bg-[#F5F5F0] px-3 py-1 mb-4 font-mono text-xs font-bold tracking-widest uppercase"
@@ -93,7 +93,7 @@ const FeaturesSection = () => {
           </h2>
         </div>
 
-        {/* Bento grid */}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-2 border-black">
           {features.map((f, i) => (
             <div
@@ -119,7 +119,7 @@ const FeaturesSection = () => {
               <h3 className="font-display font-black text-black text-xl mb-2">{f.title}</h3>
               <p className="font-body text-sm text-black/55 leading-relaxed">{f.desc}</p>
 
-              {/* Corner accent */}
+
               <div
                 className="absolute bottom-0 right-0 w-0 h-0 group-hover:w-8 group-hover:h-8 transition-all duration-300"
                 style={{ background: f.accent }}

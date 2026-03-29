@@ -4,7 +4,7 @@ const NeoFooter = () => {
   return (
     <footer className="border-t-2 border-black bg-[#F5F5F0] px-6 md:px-12 py-10" aria-label="Footer">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Brand */}
+
         <div className="flex items-center gap-3">
           <div
             className="w-8 h-8 bg-black border-2 border-black flex items-center justify-center"
@@ -20,7 +20,7 @@ const NeoFooter = () => {
           </div>
         </div>
 
-        {/* Nav links */}
+
         <div className="flex items-center gap-6">
           {['Features', 'How It Works', 'Preview', 'FAQ'].map((link) => (
             <a
@@ -33,7 +33,7 @@ const NeoFooter = () => {
           ))}
         </div>
 
-        {/* Copyright */}
+
         <div className="font-mono text-xs text-black/30">
           © {new Date().getFullYear()} ReimburseFlow
         </div>

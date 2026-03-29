@@ -127,7 +127,7 @@ const FAQSection = () => {
       ref={sectionRef}
       className="py-28 md:py-40 bg-white border-t-2 border-black relative overflow-hidden"
     >
-      {/* Background grid accent */}
+
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
@@ -139,7 +139,7 @@ const FAQSection = () => {
       />
 
       <div className="max-w-[1440px] mx-auto px-6 md:px-12 relative z-10">
-        {/* Section header */}
+
         <div className="grid grid-cols-1 md:grid-cols-12 mb-16 gap-8 faq-reveal">
           <div className="md:col-span-3">
             <span className="font-mono text-xs tracking-[0.2em] uppercase text-black/30 block mb-4">
@@ -162,7 +162,7 @@ const FAQSection = () => {
           </div>
         </div>
 
-        {/* Category filter tabs */}
+
         <div className="flex flex-wrap gap-2 mb-12 faq-reveal">
           {allCategories.map((cat) => (
             <button
@@ -182,7 +182,7 @@ const FAQSection = () => {
           ))}
         </div>
 
-        {/* FAQ cards */}
+
         <div className="space-y-0 border-t-2 border-black">
           {filtered.map((faq, i) => {
             const globalIndex = faqs.indexOf(faq);
@@ -201,7 +201,7 @@ const FAQSection = () => {
                   aria-expanded={isOpen}
                 >
                   <div className="flex items-start gap-4 flex-1 min-w-0">
-                    {/* Category badge */}
+
                     <span
                       className={`hidden md:flex items-center gap-1.5 px-3 py-1 text-[10px] font-mono font-medium tracking-widest uppercase border flex-shrink-0 mt-0.5 transition-colors ${
                         isOpen
@@ -214,7 +214,7 @@ const FAQSection = () => {
                       {faq.category}
                     </span>
 
-                    {/* Question */}
+
                     <span
                       className={`text-lg md:text-xl font-bold tracking-tight transition-colors leading-snug ${
                         isOpen ? 'text-white' : 'text-black group-hover:text-black'
@@ -224,7 +224,7 @@ const FAQSection = () => {
                     </span>
                   </div>
 
-                  {/* Toggle icon */}
+
                   <span
                     className={`flex-shrink-0 w-8 h-8 border-2 flex items-center justify-center font-mono text-lg transition-all duration-300 ${
                       isOpen
@@ -236,7 +236,7 @@ const FAQSection = () => {
                   </span>
                 </button>
 
-                {/* Answer panel */}
+
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     isOpen ? 'max-h-96 pb-7' : 'max-h-0'
@@ -251,7 +251,7 @@ const FAQSection = () => {
           })}
         </div>
 
-        {/* Bottom CTA */}
+
         <div className="mt-16 faq-reveal flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-12 border-t-2 border-black">
           <p className="text-black/50 text-sm font-mono">
             Still have questions?

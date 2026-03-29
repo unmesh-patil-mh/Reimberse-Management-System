@@ -32,7 +32,7 @@ const HeroSection = () => {
     }
   };
 
-  // Workflow visualization data
+
   const workflowSteps = [
     { label: 'Submit', status: 'complete', icon: '📤' },
     { label: 'Manager Review', status: 'complete', icon: '👤' },
@@ -46,7 +46,7 @@ const HeroSection = () => {
       className="relative min-h-screen flex flex-col justify-center pt-24 pb-16 px-6 md:px-12 overflow-hidden bg-[#F5F5F0]"
       aria-label="Hero"
     >
-      {/* Grid background */}
+
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -60,7 +60,7 @@ const HeroSection = () => {
       <div className="relative z-10 max-w-[1200px] mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-          {/* LEFT */}
+
           <div>
             <div
               className="neo-reveal inline-flex items-center gap-2 border-2 border-black bg-[#0066FF] px-3 py-1.5 mb-8"
@@ -96,7 +96,7 @@ const HeroSection = () => {
               Dynamic workflows. Real-time approvals. Zero manual chaos.
             </p>
 
-            {/* CTA area */}
+
             <div
               className="neo-reveal"
               style={{ transitionDelay: '240ms' }}
@@ -123,13 +123,13 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* RIGHT: Workflow visualization */}
+
           <div className="neo-reveal relative" style={{ transitionDelay: '200ms' }}>
             <div
               className="relative border-2 border-black bg-black p-6"
               style={{ boxShadow: '8px 8px 0 #0066FF' }}
             >
-              {/* Terminal header */}
+
               <div className="flex items-center gap-2 mb-5 pb-4 border-b border-white/10">
                 <div className="w-3 h-3 rounded-full bg-red-500" />
                 <div className="w-3 h-3 rounded-full bg-yellow-400" />
@@ -137,7 +137,7 @@ const HeroSection = () => {
                 <span className="ml-3 font-mono text-xs text-white/30">approval-workflow.live</span>
               </div>
 
-              {/* Workflow rows */}
+
               <div className="space-y-4">
                 {workflowSteps.map((step, i) => (
                   <div
@@ -186,7 +186,7 @@ const HeroSection = () => {
                 ))}
               </div>
 
-              {/* Bottom stats */}
+
               <div className="mt-6 pt-4 border-t border-white/10 grid grid-cols-3 gap-4">
                 <div>
                   <div className="font-mono text-xs text-white/25 mb-1">Avg Time</div>

@@ -29,7 +29,7 @@ const CTASection = () => {
           className="neo-reveal border-2 border-black bg-black p-12 md:p-20 relative overflow-hidden"
           style={{ boxShadow: '8px 8px 0 #0066FF' }}
         >
-          {/* Background grid */}
+
           <div
             className="absolute inset-0 pointer-events-none opacity-10"
             style={{
@@ -40,7 +40,7 @@ const CTASection = () => {
             aria-hidden="true"
           />
 
-          {/* Blue accent corner */}
+
           <div
             className="absolute top-0 right-0 w-48 h-48 pointer-events-none"
             style={{ background: 'radial-gradient(circle at top right, rgba(0,102,255,0.25), transparent 70%)' }}

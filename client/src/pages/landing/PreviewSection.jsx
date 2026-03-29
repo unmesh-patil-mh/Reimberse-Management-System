@@ -32,13 +32,13 @@ const PreviewSection = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Animate Pending → Approved transition
+
   useEffect(() => {
     const interval = setInterval(() => {
       setExpenses((prev) => {
         const pendingIdx = prev.findIndex((e) => e.status === 'Pending');
         if (pendingIdx === -1) {
-          // Reset
+
           return initialExpenses.map((e) => ({ ...e }));
         }
         const updated = [...prev];
@@ -59,7 +59,7 @@ const PreviewSection = () => {
       aria-label="Live System Preview"
     >
       <div className="max-w-[1200px] mx-auto">
-        {/* Header */}
+
         <div className="neo-reveal mb-14">
           <div
             className="inline-block border-2 border-[#0066FF] bg-transparent px-3 py-1 mb-4 font-mono text-xs font-bold tracking-widest uppercase text-[#0066FF]"
@@ -74,12 +74,12 @@ const PreviewSection = () => {
           </h2>
         </div>
 
-        {/* Dashboard mock */}
+
         <div
           className="neo-reveal border-2 border-white/15 bg-[#0a0a0a] overflow-hidden"
           style={{ transitionDelay: '120ms', boxShadow: '8px 8px 0 #0066FF' }}
         >
-          {/* Dashboard header bar */}
+
           <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/3">
             <div className="flex items-center gap-3">
               <div className="w-2.5 h-2.5 rounded-full bg-[#0066FF] animate-pulse" />
@@ -93,7 +93,7 @@ const PreviewSection = () => {
             </div>
           </div>
 
-          {/* Stats row */}
+
           <div className="grid grid-cols-3 border-b border-white/10">
             {[
               { label: 'Total Submitted', value: '$3,824.69', color: 'text-white' },
@@ -107,14 +107,14 @@ const PreviewSection = () => {
             ))}
           </div>
 
-          {/* Table header */}
+
           <div className="grid grid-cols-5 px-6 py-3 border-b border-white/10 bg-white/2">
             {['ID', 'Description', 'Amount', 'Date', 'Status'].map((h) => (
               <div key={h} className="font-mono text-xs text-white/25 uppercase tracking-widest">{h}</div>
             ))}
           </div>
 
-          {/* Table rows */}
+
           <div>
             {expenses.map((exp) => {
               const cfg = statusConfig[exp.status];

@@ -51,7 +51,7 @@ const ProblemStrip = () => {
   return (
     <div ref={ref} className="border-y-2 border-black bg-black overflow-x-auto">
       <div className="max-w-[1200px] mx-auto px-6 md:px-12 py-5 flex flex-col md:flex-row items-center gap-4 md:gap-0">
-        {/* Pain points */}
+
         <div className="flex flex-wrap md:flex-nowrap items-center gap-0 flex-1">
           {problems.map((p, i) => (
             <React.Fragment key={p.text}>
@@ -69,10 +69,10 @@ const ProblemStrip = () => {
           ))}
         </div>
 
-        {/* Divider */}
+
         <div className="hidden md:block w-px h-8 bg-white/15 mx-6" />
 
-        {/* Solution */}
+
         <div
           className="neo-reveal flex items-center gap-3 bg-[#0066FF] border-2 border-[#0066FF] px-5 py-2 shrink-0"
           style={{ transitionDelay: '280ms', boxShadow: '3px 3px 0 rgba(255,255,255,0.2)' }}
