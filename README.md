@@ -1,7 +1,6 @@
 # 💸 Reimbursement Management System
 
 A full-stack expense reimbursement platform with multi-step sequential approval workflows, role-based access control, and company-scoped multi-tenancy.
-
 ---
 
 ## 📋 Table of Contents
