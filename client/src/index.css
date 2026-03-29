@@ -158,3 +158,58 @@
     color: #09090b;
   }
 }
+
+/* ═══════════════ LANDING PAGE NEOBRUTALISM STYLES ═══════════════ */
+
+/* Google Fonts for landing page */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400;1,9..144,700;1,9..144,900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* Landing page font families */
+.landing-page {
+  --font-display: 'Fraunces', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.landing-page .font-display { font-family: var(--font-display); }
+.landing-page .font-body { font-family: var(--font-body); }
+.landing-page .font-mono { font-family: var(--font-mono); }
+
+/* ─── Neobrutalism Scroll Reveal ─── */
+.neo-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+.neo-reveal-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── FAQ Reveal ─── */
+.faq-reveal {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.faq-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ─── Neobrutalism Button Hovers ─── */
+.neo-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 #0066FF !important;
+}
+.neo-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 #000 !important;
+}
+
+/* ─── Landing page selection color ─── */
+.landing-page ::selection {
+  background: rgba(0, 102, 255, 0.15);
+  color: #000;
+}
