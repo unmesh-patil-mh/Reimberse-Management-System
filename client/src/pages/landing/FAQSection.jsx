@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const faqs = [
   {
@@ -120,7 +120,31 @@ const FAQSection = () => {
   const filtered =
     activeCategory === 'All' ? faqs : faqs.filter((f) => f.category === activeCategory);
 
-  const toggle = (i) => setOpenIndex((prev) => (prev === i ? null : i));
+  // Play the faaah.mp3 sound on FAQ open
+  const faahAudioRef = useRef(null);
+
+  useEffect(() => {
+    // Preload the audio for instant playback
+    faahAudioRef.current = new Audio('/faaah.mp3');
+    faahAudioRef.current.volume = 0.5;
+  }, []);
+
+  const playFaahSound = useCallback(() => {
+    try {
+      const audio = faahAudioRef.current;
+      if (!audio) return;
+      audio.currentTime = 0; // Reset so rapid clicks work
+      audio.play();
+    } catch {
+      // Audio not available — silently skip
+    }
+  }, []);
+
+  const toggle = (i) => {
+    const isOpening = openIndex !== i;
+    setOpenIndex((prev) => (prev === i ? null : i));
+    if (isOpening) playFaahSound();
+  };
 
   return (
     <section
