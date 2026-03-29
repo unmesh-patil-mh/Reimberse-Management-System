@@ -16,7 +16,13 @@ const healthRoutes = require('./routes/health.routes');
 const app = express();
 
 // ─── MIDDLEWARE ──────────────────────────────────────────
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://reimbursement-management-six.vercel.app',
+    'http://localhost:5173', // local dev
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 
 // ─── ROUTES ─────────────────────────────────────────────
