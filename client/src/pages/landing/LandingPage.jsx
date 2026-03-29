@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 import HeroSection from './HeroSection';
@@ -12,6 +12,37 @@ import NeoFooter from './NeoFooter';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const audioPlayed = useRef(false);
+
+  // Play faaah.mp3 on first user interaction (browsers require a gesture)
+  useEffect(() => {
+    const playOnce = () => {
+      if (audioPlayed.current) return;
+      audioPlayed.current = true;
+
+      const audio = new Audio('/faaah.mp3');
+      audio.volume = 0.5;
+      audio.play().catch(() => {});
+
+      // Cleanup listeners after playing
+      window.removeEventListener('click', playOnce);
+      window.removeEventListener('scroll', playOnce);
+      window.removeEventListener('keydown', playOnce);
+      window.removeEventListener('touchstart', playOnce);
+    };
+
+    window.addEventListener('click', playOnce, { once: true });
+    window.addEventListener('scroll', playOnce, { once: true });
+    window.addEventListener('keydown', playOnce, { once: true });
+    window.addEventListener('touchstart', playOnce, { once: true });
+
+    return () => {
+      window.removeEventListener('click', playOnce);
+      window.removeEventListener('scroll', playOnce);
+      window.removeEventListener('keydown', playOnce);
+      window.removeEventListener('touchstart', playOnce);
+    };
+  }, []);
 
   return (
     <div className="landing-page">
