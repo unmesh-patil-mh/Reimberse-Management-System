@@ -208,6 +208,12 @@ VITE_API_URL=http://localhost:5000/api
 ```
 
 ---
+## Contact 
+- Email : punmesh56@gmail.com
+- LinkedIn : https://linkedin.com/in/unmeshpatil2005
+- Leetcode : https://leetcode.com/u/unmesh3010
+
+---
 
 <div align="center">
 
@@ -215,7 +221,3 @@ Built with ☕ and late nights
 
 </div>
 
-## Contact 
-- Email : punmesh56@gmail.com
-- LinkedIn : https://linkedin.com/in/unmeshpatil2005
-- Leetcode : https://leetcode.com/u/unmesh3010
