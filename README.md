@@ -214,3 +214,7 @@ VITE_API_URL=http://localhost:5000/api
 Built with ☕ and late nights
 
 </div>
+
+## Contact 
+- Email -> punmesh56@gmail.com
+- 
