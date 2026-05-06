@@ -211,6 +211,6 @@ VITE_API_URL=http://localhost:5000/api
 
 <div align="center">
 
-Built with ☕ and late nights.
+Built with ☕ and late nights
 
 </div>
